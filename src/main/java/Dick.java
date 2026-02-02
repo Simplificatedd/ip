@@ -5,8 +5,7 @@ public class Dick {
 
 
     public static void main(String[] args) {
-        ArrayList<String> tasks = new ArrayList<>();
-        ArrayList<Boolean> isDone = new ArrayList<>();
+        ArrayList<Task> tasks = new ArrayList<>();
         Scanner scanner = new Scanner(System.in);
         String numStr = "";
 
@@ -23,14 +22,13 @@ public class Dick {
             }
             if (optionsCheck.startsWith("add ")) {
                 String task = input.substring(4);
-                tasks.add(task);
-                isDone.add(false);
+                tasks.add(new Task(task));
                 System.out.println("Added: " + task);
             }
             else if (optionsCheck.equals("list")) {
                 for (int i = 0; i < tasks.size(); i++) {
-                    String mark = isDone.get(i) ? "[X] " : "[ ] ";
-                    System.out.println((i + 1) + "." + mark + tasks.get(i));
+                    Task task = tasks.get(i);
+                    System.out.println((i + 1) + "." + task.getStatus() + task.getDescription());
                 }
             }
             else if (optionsCheck.startsWith("mark ")) {
@@ -41,12 +39,13 @@ public class Dick {
 
                     if (index < 0 || index >= tasks.size()) {
                         System.out.println("Invalid Task Number");
-                    } else if (isDone.get(index) == true) {
+                    }
+                    else if (tasks.get(index).isDone()) {
                         System.out.println("Task is already marked as done.");
                     } else {
-                        isDone.set(index, true);
+                        tasks.get(index).mark();
                         System.out.println("Nice! I've marked this task as done:");
-                        System.out.println("[X] " + tasks.get(index));
+                        System.out.println(tasks.get(index).getStatus() + tasks.get(index).getDescription());
                     }
                 } catch (NumberFormatException e) {
                     System.out.println("Invalid Task Number");
@@ -61,12 +60,12 @@ public class Dick {
 
                     if (index < 0 || index >= tasks.size()) {
                         System.out.println("Invalid Task Number");
-                    } else if (isDone.get(index) == false) {
+                    } else if (!tasks.get(index).isDone()) {
                         System.out.println("Task is already unmarked");
                     } else {
-                        isDone.set(index, false);
+                        tasks.get(index).unmark();
                         System.out.println("OK, I've marked this task as not done yet:");
-                        System.out.println("[ ] " + tasks.get(index));
+                        System.out.println(tasks.get(index).getStatus() + tasks.get(index).getDescription());
                     }
                 } catch (NumberFormatException e) {
                     System.out.println("Invalid Task Number");
