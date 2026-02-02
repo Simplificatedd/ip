@@ -1,84 +1,127 @@
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class Dick {
+    private static final String LINE =
+            "____________________________________________________________";
 
+    private static final String GREETING =
+            LINE + System.lineSeparator()
+                    + " Hello! I'm Dick" + System.lineSeparator()
+                    + " What can I do for you?" + System.lineSeparator()
+                    + LINE;
+
+    private static final String GOODBYE =
+            LINE + System.lineSeparator()
+                    + " Bye. Hope to see you again soon!" + System.lineSeparator()
+                    + LINE;
 
     public static void main(String[] args) {
-        ArrayList<Task> tasks = new ArrayList<>();
-        Scanner scanner = new Scanner(System.in);
-        String numStr = "";
+        List<Task> tasks = new ArrayList<>();
 
-        System.out.println("____________________________________________________________\n" +
-                " Hello! I'm Dick\n" +
-                " What can I do for you?\n" +
-                "____________________________________________________________");
+        try (Scanner scanner = new Scanner(System.in)) {
+            System.out.println(GREETING);
 
-        while (true) {
-            String input = scanner.nextLine();
-            String optionsCheck = input.toLowerCase();
-            if (optionsCheck.equals("bye")) {
-                break;
-            }
-            if (optionsCheck.startsWith("add ")) {
-                String task = input.substring(4);
-                tasks.add(new Task(task));
-                System.out.println("Added: " + task);
-            }
-            else if (optionsCheck.equals("list")) {
-                for (int i = 0; i < tasks.size(); i++) {
-                    Task task = tasks.get(i);
-                    System.out.println((i + 1) + "." + task.getStatus() + task.getDescription());
+            while (true) {
+                String input = scanner.nextLine().trim();
+                if (shouldExit(input)) {
+                    break;
                 }
-            }
-            else if (optionsCheck.startsWith("mark ")) {
-                numStr = input.substring(5).trim();
 
-                try {
-                    int index = Integer.parseInt(numStr) - 1;
-
-                    if (index < 0 || index >= tasks.size()) {
-                        System.out.println("Invalid Task Number");
-                    }
-                    else if (tasks.get(index).isDone()) {
-                        System.out.println("Task is already marked as done.");
-                    } else {
-                        tasks.get(index).mark();
-                        System.out.println("Nice! I've marked this task as done:");
-                        System.out.println(tasks.get(index).getStatus() + tasks.get(index).getDescription());
-                    }
-                } catch (NumberFormatException e) {
-                    System.out.println("Invalid Task Number");
-                }
+                handleCommand(input, tasks);
             }
 
-            else if (optionsCheck.startsWith("unmark ")) {
-                numStr = input.substring(7).trim();
+            System.out.println(GOODBYE);
+        }
+    }
 
-                try {
-                    int index = Integer.parseInt(numStr) - 1;
+    private static boolean shouldExit(String input) {
+        return input.equalsIgnoreCase("bye");
+    }
 
-                    if (index < 0 || index >= tasks.size()) {
-                        System.out.println("Invalid Task Number");
-                    } else if (!tasks.get(index).isDone()) {
-                        System.out.println("Task is already unmarked");
-                    } else {
-                        tasks.get(index).unmark();
-                        System.out.println("OK, I've marked this task as not done yet:");
-                        System.out.println(tasks.get(index).getStatus() + tasks.get(index).getDescription());
-                    }
-                } catch (NumberFormatException e) {
-                    System.out.println("Invalid Task Number");
-                }
-            }
-            else {
-                System.out.println(input);
-            }
+    private static void handleCommand(String input, List<Task> tasks) {
+        String lowerInput = input.toLowerCase();
 
+        if (lowerInput.startsWith("add ")) {
+            addTask(input.substring(4).trim(), tasks);
+            return;
         }
 
-    System.out.println("____________________________________________________________\n"+
-            " Bye. Hope to see you again soon!\n"+
-            "____________________________________________________________\n");
+        if (lowerInput.equals("list")) {
+            printTasks(tasks);
+            return;
+        }
+
+        if (lowerInput.startsWith("mark ")) {
+            markTask(input.substring(5).trim(), tasks);
+            return;
+        }
+
+        if (lowerInput.startsWith("unmark ")) {
+            unmarkTask(input.substring(7).trim(), tasks);
+            return;
+        }
+
+        System.out.println(input);
+    }
+
+    private static void addTask(String description, List<Task> tasks) {
+        tasks.add(new Task(description));
+        System.out.println("Added: " + description);
+    }
+
+    private static void printTasks(List<Task> tasks) {
+        for (int i = 0; i < tasks.size(); i++) {
+            System.out.println((i + 1) + ". " + tasks.get(i));
+        }
+    }
+
+    private static void markTask(String numberText, List<Task> tasks) {
+        int index = parseTaskIndex(numberText, tasks.size());
+        if (index == -1) {
+            System.out.println("Invalid Task Number");
+            return;
+        }
+
+        Task task = tasks.get(index);
+        if (task.isDone()) { // boolean naming style: isXxx :contentReference[oaicite:1]{index=1}
+            System.out.println("Task is already marked as done.");
+            return;
+        }
+
+        task.mark();
+        System.out.println("Nice! I've marked this task as done:");
+        System.out.println(task);
+    }
+
+    private static void unmarkTask(String numberText, List<Task> tasks) {
+        int index = parseTaskIndex(numberText, tasks.size());
+        if (index == -1) {
+            System.out.println("Invalid Task Number");
+            return;
+        }
+
+        Task task = tasks.get(index);
+        if (!task.isDone()) {
+            System.out.println("Task is already unmarked.");
+            return;
+        }
+
+        task.unmark();
+        System.out.println("OK, I've marked this task as not done yet:");
+        System.out.println(task);
+    }
+
+    private static int parseTaskIndex(String numberText, int taskCount) {
+        try {
+            int index = Integer.parseInt(numberText) - 1;
+            if (index < 0 || index >= taskCount) {
+                return -1;
+            }
+            return index;
+        } catch (NumberFormatException e) {
+            return -1;
+        }
     }
 }
