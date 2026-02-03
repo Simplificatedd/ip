@@ -62,6 +62,45 @@ public class Dick {
             unmarkTask(input.substring(7).trim(), tasks);
             return;
         }
+        if (lowerInput.startsWith("todo ")) {
+            String description = input.substring(5).trim();
+            tasks.add(new Todo(description));
+            System.out.println("Added: " + tasks.get(tasks.size() - 1));
+            return;
+        }
+
+        if (lowerInput.startsWith("deadline ")) {
+            String rest = input.substring(9).trim();
+            String[] parts = rest.split(" /by ", 2);
+            if (parts.length < 2 || parts[0].isBlank() || parts[1].isBlank()) {
+                System.out.println("Invalid format. Use: deadline <desc> /by <time>");
+                return;
+            }
+
+            tasks.add(new Deadline(parts[0].trim(), parts[1].trim()));
+            System.out.println("Added: " + tasks.get(tasks.size() - 1));
+            return;
+        }
+
+        if (lowerInput.startsWith("event ")) {
+            String rest = input.substring(6).trim();
+            String[] firstSplit = rest.split(" /from ", 2);
+            if (firstSplit.length < 2 || firstSplit[0].isBlank()) {
+                System.out.println("Invalid format. Use: event <desc> /from <start> /to <end>");
+                return;
+            }
+
+            String description = firstSplit[0].trim();
+            String[] secondSplit = firstSplit[1].split(" /to ", 2);
+            if (secondSplit.length < 2 || secondSplit[0].isBlank() || secondSplit[1].isBlank()) {
+                System.out.println("Invalid format. Use: event <desc> /from <start> /to <end>");
+                return;
+            }
+
+            tasks.add(new Event(description, secondSplit[0].trim(), secondSplit[1].trim()));
+            System.out.println("Added: " + tasks.get(tasks.size() - 1));
+            return;
+        }
 
         System.out.println(input);
     }

@@ -27,8 +27,12 @@ public class Task {
         return description;
     }
 
+    public String getType() {
+        return "[?]";
+    }
+
     @Override
     public String toString() {
-        return getStatus() + getDescription();
+        return getType() + getStatus() + description;
     }
 }
