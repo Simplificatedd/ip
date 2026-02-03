@@ -2,6 +2,22 @@ ____________________________________________________________
  Hello! I'm Dick
  What can I do for you?
 ____________________________________________________________
+Added: [T][ ] read book
+Added: [D][ ] return book (by: Monday)
+Added: [E][ ] project meeting (from: Mon 2pm to: Mon 4pm)
+1. [T][ ] read book
+2. [D][ ] return book (by: Monday)
+3. [E][ ] project meeting (from: Mon 2pm to: Mon 4pm)
+Nice! I've marked this task as done:
+[D][X] return book (by: Monday)
+1. [T][ ] read book
+2. [D][X] return book (by: Monday)
+3. [E][ ] project meeting (from: Mon 2pm to: Mon 4pm)
+OK, I've marked this task as not done yet:
+[D][ ] return book (by: Monday)
+1. [T][ ] read book
+2. [D][ ] return book (by: Monday)
+3. [E][ ] project meeting (from: Mon 2pm to: Mon 4pm)
+____________________________________________________________
  Bye. Hope to see you again soon!
 ____________________________________________________________
-
