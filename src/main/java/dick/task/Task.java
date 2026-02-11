@@ -1,3 +1,5 @@
+package dick.task;
+
 public class Task {
     protected final String description;
     protected boolean isDone;

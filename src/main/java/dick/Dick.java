@@ -1,6 +1,14 @@
+package dick;
+
+import dick.task.Task;
+import dick.task.Todo;
+import dick.task.Deadline;
+import dick.task.Event;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+
 
 public class Dick {
     private static final String LINE =
