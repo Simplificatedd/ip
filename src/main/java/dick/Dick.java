@@ -128,7 +128,7 @@ public class Dick {
         }
 
         if (lowerInput.startsWith("delete ")) {
-            handleDelete(input.substring(7).trim(), tasks);
+            handleDelete(input.substring(7).trim(), tasks, storage);
             return;
         }
 
