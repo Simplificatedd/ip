@@ -127,6 +127,17 @@ public class Dick {
             return;
         }
 
+        if (lowerInput.startsWith("delete ")) {
+            handleDelete(input.substring(7).trim(), tasks);
+            return;
+        }
+
+        if (lowerInput.equals("delete")) {
+            System.out.println("Please specify a task number to delete.");
+            return;
+        }
+
+
         System.out.println(input);
     }
 
@@ -161,6 +172,21 @@ public class Dick {
         storage.save(tasks);
         System.out.println("Added: " + tasks.get(tasks.size() - 1));
     }
+
+    private static void handleDelete(String numberText, List<Task> tasks, Storage storage) {
+        int index = parseTaskIndex(numberText, tasks.size());
+        if (index == -1) {
+            System.out.println("Invalid Task Number");
+            return;
+        }
+
+        Task removed = tasks.remove(index);
+        storage.save(tasks);
+        System.out.println("Noted. I've removed this task:");
+        System.out.println("  " + removed);
+        System.out.println("Now you have " + tasks.size() + " tasks in the list.");
+    }
+
 
     private static void addTask(String description, List<Task> tasks, Storage storage) {
         if (description.isBlank()) {
