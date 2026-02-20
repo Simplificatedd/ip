@@ -4,6 +4,7 @@ import dick.task.Task;
 import dick.task.Todo;
 import dick.task.Deadline;
 import dick.task.Event;
+import dick.storage.Storage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +27,9 @@ public class Dick {
                     + LINE;
 
     public static void main(String[] args) {
-        List<Task> tasks = new ArrayList<>();
+        Storage storage = new Storage("data/tasks.txt");
+        List<Task> tasks = new ArrayList<>(storage.load());
+
 
         try (Scanner scanner = new Scanner(System.in)) {
             System.out.println(GREETING);
@@ -37,7 +40,7 @@ public class Dick {
                     break;
                 }
 
-                handleCommand(input, tasks);
+                handleCommand(input, tasks, storage);
             }
 
             System.out.println(GOODBYE);
@@ -48,7 +51,7 @@ public class Dick {
         return input.equalsIgnoreCase("bye");
     }
 
-    private static void handleCommand(String input, List<Task> tasks) {
+    private static void handleCommand(String input, List<Task> tasks, Storage storage) {
         String lowerInput = input.toLowerCase();
 
         if (lowerInput.equals("add")) {
@@ -82,7 +85,7 @@ public class Dick {
         }
 
         if (lowerInput.startsWith("add ")) {
-            addTask(input.substring(4).trim(), tasks);
+            addTask(input.substring(4).trim(), tasks, storage);
             return;
         }
 
@@ -92,12 +95,12 @@ public class Dick {
         }
 
         if (lowerInput.startsWith("mark ")) {
-            setStatus(input.substring(5).trim(), tasks, true);
+            setStatus(input.substring(5).trim(), tasks, true, storage);
             return;
         }
 
         if (lowerInput.startsWith("unmark ")) {
-            setStatus(input.substring(7).trim(), tasks, false);
+            setStatus(input.substring(7).trim(), tasks, false, storage);
             return;
         }
 
@@ -108,36 +111,26 @@ public class Dick {
                 return;
             }
             tasks.add(new Todo(description));
+            storage.save(tasks);
             System.out.println("Added: " + tasks.get(tasks.size() - 1));
             return;
         }
 
 
         if (lowerInput.startsWith("deadline ")) {
-            handleAddDeadline(input, tasks);
+            handleAddDeadline(input, tasks, storage);
             return;
         }
 
         if (lowerInput.startsWith("event ")) {
-            handleAddEvent(input, tasks);
+            handleAddEvent(input, tasks, storage);
             return;
         }
-
-        if (lowerInput.startsWith("delete ")) {
-            handleDelete(input.substring(7).trim(), tasks);
-            return;
-        }
-
-        if (lowerInput.equals("delete")) {
-            System.out.println("Please specify a task number to delete.");
-            return;
-        }
-
 
         System.out.println(input);
     }
 
-    private static void handleAddDeadline(String input, List<Task> tasks) {
+    private static void handleAddDeadline(String input, List<Task> tasks, Storage storage) {
         String rest = input.substring(9).trim();
         String[] parts = rest.split(" /by ", 2);
         if (parts.length < 2 || parts[0].isBlank() || parts[1].isBlank()) {
@@ -149,7 +142,7 @@ public class Dick {
         System.out.println("Added: " + tasks.get(tasks.size() - 1));
     }
 
-    private static void handleAddEvent(String input, List<Task> tasks) {
+    private static void handleAddEvent(String input, List<Task> tasks, Storage storage) {
         String rest = input.substring(6).trim();
         String[] firstSplit = rest.split(" /from ", 2);
         if (firstSplit.length < 2 || firstSplit[0].isBlank()) {
@@ -165,29 +158,17 @@ public class Dick {
         }
 
         tasks.add(new Event(description, secondSplit[0].trim(), secondSplit[1].trim()));
+        storage.save(tasks);
         System.out.println("Added: " + tasks.get(tasks.size() - 1));
     }
 
-    private static void handleDelete(String numberText, List<Task> tasks) {
-        int index = parseTaskIndex(numberText, tasks.size());
-        if (index == -1) {
-            System.out.println("Invalid Task Number");
-            return;
-        }
-
-        Task removed = tasks.remove(index);
-        System.out.println("Noted. I've removed this task:");
-        System.out.println("  " + removed);
-        System.out.println("Now you have " + tasks.size() + " tasks in the list.");
-    }
-
-
-    private static void addTask(String description, List<Task> tasks) {
+    private static void addTask(String description, List<Task> tasks, Storage storage) {
         if (description.isBlank()) {
             System.out.println("Please provide a task description.");
             return;
         }
         tasks.add(new Task(description));
+        storage.save(tasks);
         System.out.println("Added: " + description);
     }
 
@@ -198,7 +179,7 @@ public class Dick {
         }
     }
 
-    private static void setStatus(String numberText, List<Task> tasks, boolean isDone) {
+    private static void setStatus(String numberText, List<Task> tasks, boolean isDone, Storage storage) {
         int index = parseTaskIndex(numberText, tasks.size());
         if (index == -1) {
             System.out.println("Invalid Task Number");
@@ -217,9 +198,11 @@ public class Dick {
 
         if (isDone) {
             task.mark();
+            storage.save(tasks);
             System.out.println("Nice! I've marked this task as done:");
         } else {
             task.unmark();
+            storage.save(tasks);
             System.out.println("OK, I've marked this task as not done yet:");
         }
 
