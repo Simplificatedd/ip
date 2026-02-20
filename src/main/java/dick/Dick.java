@@ -138,7 +138,7 @@ public class Dick {
         }
 
 
-        System.out.println(input);
+        System.out.println("Command not recognized");
     }
 
     private static void handleAddDeadline(String input, List<Task> tasks, Storage storage) {
@@ -150,6 +150,7 @@ public class Dick {
         }
 
         tasks.add(new Deadline(parts[0].trim(), parts[1].trim()));
+        storage.save(tasks);
         System.out.println("Added: " + tasks.get(tasks.size() - 1));
     }
 
