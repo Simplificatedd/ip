@@ -22,6 +22,11 @@ public class Storage {
         ensureParentDirExists();
 
         if (!Files.exists(filePath)) {
+            try {
+                Files.createFile(filePath);
+            } catch (IOException ignored) {
+                // if somehow unable to create, it will behave like an empty storage
+            }
             return new ArrayList<>();
         }
 
@@ -41,7 +46,6 @@ public class Storage {
             }
             return tasks;
         } catch (IOException e) {
-            System.out.println("Warning: failed to load saved tasks.");
             return new ArrayList<>();
         }
     }
@@ -56,8 +60,8 @@ public class Storage {
 
         try {
             Files.write(filePath, lines);
-        } catch (IOException e) {
-            System.out.println("Warning: failed to save tasks.");
+        } catch (IOException ignored) {
+            // ignore save failures (or throw if you prefer)
         }
     }
 
@@ -68,15 +72,15 @@ public class Storage {
         }
         try {
             Files.createDirectories(parent);
-        } catch (IOException e) {
-            System.out.println("Warning: failed to create data directory.");
+        } catch (IOException ignored) {
+            // ignore
         }
     }
 
     private static String serializeTask(Task t) {
-        // IMPORTANT: adjust these if your subclasses use different getter names
         int done = t.isDone() ? 1 : 0;
 
+        // NOTE: this requires your Task/Todo/Deadline/Event to have these getters.
         if (t instanceof Todo todo) {
             return "TODO|" + done + "|" + escape(todo.getDescription());
         }
@@ -92,7 +96,6 @@ public class Storage {
     }
 
     private static Task parseLine(String line) {
-        // If a line is badly written, skip it to prevent crashing.
         String[] parts = line.split("\\|", -1);
         if (parts.length < 3) {
             return null;
@@ -129,14 +132,12 @@ public class Storage {
     }
 
     private static String escape(String s) {
-        // Minimal escaping to keep 1-task-per-line.
         return s.replace("\\", "\\\\")
                 .replace("\n", "\\n")
                 .replace("|", "\\p");
     }
 
     private static String unescape(String s) {
-        // Reverse of escape()
         return s.replace("\\p", "|")
                 .replace("\\n", "\n")
                 .replace("\\\\", "\\");

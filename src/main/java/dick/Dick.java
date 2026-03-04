@@ -75,10 +75,17 @@ public class Dick {
     private void handleDeadline(String args) {
         String[] parts = args.split(" /by ", 2);
         if (parts.length < 2 || parts[0].isBlank() || parts[1].isBlank()) {
-            ui.showMessage("Invalid format. Use: deadline <desc> /by <time>");
+            ui.showMessage("Invalid format. Use: deadline <desc> /by <yyyy-mm-dd>");
             return;
         }
-        tasks.add(new Deadline(parts[0].trim(), parts[1].trim()));
+
+        try {
+            tasks.add(new Deadline(parts[0].trim(), parts[1].trim()));
+        } catch (IllegalArgumentException e) {
+            ui.showMessage(e.getMessage());
+            return;
+        }
+
         storage.save(tasks.asUnmodifiableList());
         ui.showAdded(tasks.get(tasks.size() - 1));
     }
