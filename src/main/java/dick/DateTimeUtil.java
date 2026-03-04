@@ -5,6 +5,9 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
+/**
+ * Utility methods for parsing, formatting, and storing dates/times used by tasks.
+ */
 public class DateTimeUtil {
     private static final DateTimeFormatter DISPLAY_DATE =
             DateTimeFormatter.ofPattern("MMM dd yyyy");
@@ -19,11 +22,16 @@ public class DateTimeUtil {
     private DateTimeUtil() { }
 
     /**
+     * Parses a date/time string into a {@code LocalDateTime}.
      * Accepts:
-     *  - yyyy-MM-dd
-     *  - yyyy-MM-dd HHmm
-     *  - yyyy-MM-dd HH:mm
-     *  - yyyy-MM-ddTHH:mm (from storage)
+     * yyyy-MM-dd
+     * yyyy-MM-dd HHmm
+     * yyyy-MM-dd HH:mm
+     * yyyy-MM-ddTHH:mm (storage format)
+     *
+     * @param raw Raw date/time string.
+     * @return Parsed LocalDateTime.
+     * @throws IllegalArgumentException If the input cannot be parsed.
      */
     public static LocalDateTime parseDateTime(String raw) {
         String s = raw.trim();
@@ -54,11 +62,22 @@ public class DateTimeUtil {
         throw new IllegalArgumentException("Invalid date/time. Use: yyyy-mm-dd OR yyyy-mm-dd HHmm");
     }
 
+    /**
+     * Checks if the given date-time is exactly at 00:00 (used to represent date-only input).
+     *
+     * @param dt Date-time to check.
+     * @return True if at start of day.
+     */
     public static boolean isStartOfDay(LocalDateTime dt) {
         return dt.toLocalTime().getHour() == 0 && dt.toLocalTime().getMinute() == 0;
     }
 
-    /** For saving to storage. */
+    /**
+     * Converts a date-time into a stable storage format.
+     *
+     * @param dt Date-time to convert.
+     * @return yyyy-MM-dd for date-only values, otherwise yyyy-MM-ddTHH:mm.
+     */
     public static String toStorageString(LocalDateTime dt) {
         if (isStartOfDay(dt)) {
             return dt.toLocalDate().toString(); // yyyy-mm-dd
@@ -66,7 +85,12 @@ public class DateTimeUtil {
         return dt.withSecond(0).withNano(0).toString(); // yyyy-mm-ddTHH:mm
     }
 
-    /** For display to user. */
+    /**
+     * Converts a date-time into a user-friendly display string.
+     *
+     * @param dt Date-time to format.
+     * @return Display string such as "Oct 15 2019" or "Oct 15 2019, 6:00PM".
+     */
     public static String toDisplayString(LocalDateTime dt) {
         if (isStartOfDay(dt)) {
             return dt.toLocalDate().format(DISPLAY_DATE);

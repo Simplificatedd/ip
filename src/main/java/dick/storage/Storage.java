@@ -11,13 +11,27 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Handles loading tasks from disk and saving tasks back to disk.
+ * Tasks are stored one per line in a pipe-delimited format.
+ */
 public class Storage {
     private final Path filePath;
 
+    /**
+     * Creates a storage backed by the given file path.
+     *
+     * @param filePath Path to save file.
+     */
     public Storage(String filePath) {
         this.filePath = Path.of(filePath);
     }
 
+    /**
+     * Loads tasks from the save file.
+     *
+     * @return List of loaded tasks, or an empty list if none.
+     */
     public List<Task> load() {
         ensureParentDirExists();
 
@@ -50,6 +64,11 @@ public class Storage {
         }
     }
 
+    /**
+     * Saves tasks to the save file, overwriting any existing contents.
+     *
+     * @param tasks Tasks to save.
+     */
     public void save(List<Task> tasks) {
         ensureParentDirExists();
 
@@ -65,6 +84,7 @@ public class Storage {
         }
     }
 
+    /** Ensures the parent directory of the save file exists. */
     private void ensureParentDirExists() {
         Path parent = filePath.getParent();
         if (parent == null) {
@@ -77,6 +97,12 @@ public class Storage {
         }
     }
 
+    /**
+     * Serializes a task into a single-line storage format.
+     *
+     * @param t Task to serialize.
+     * @return Storage string for the task.
+     */
     private static String serializeTask(Task t) {
         int done = t.isDone() ? 1 : 0;
 
@@ -95,6 +121,12 @@ public class Storage {
         return "TASK|" + done + "|" + escape(t.getDescription());
     }
 
+    /**
+     * Parses a line from storage into a {@link Task} object.
+     *
+     * @param line Storage line.
+     * @return Parsed task, or {@code null} if the line is invalid.
+     */
     private static Task parseLine(String line) {
         String[] parts = line.split("\\|", -1);
         if (parts.length < 3) {
@@ -131,12 +163,24 @@ public class Storage {
         return task;
     }
 
+    /**
+     * Escapes special characters so that each task stays on one line.
+     *
+     * @param s Raw string.
+     * @return Escaped string.
+     */
     private static String escape(String s) {
         return s.replace("\\", "\\\\")
                 .replace("\n", "\\n")
                 .replace("|", "\\p");
     }
 
+    /**
+     * Reverses {@link #escape(String)}.
+     *
+     * @param s Escaped string.
+     * @return Unescaped string.
+     */
     private static String unescape(String s) {
         return s.replace("\\p", "|")
                 .replace("\\n", "\n")

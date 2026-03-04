@@ -7,12 +7,20 @@ import dick.task.Task;
 import dick.task.Todo;
 
 import java.util.List;
-
+/**
+ * Entry point of the Dick task management chatbot.
+ * Coordinates user interaction, parsing, task operations, and persistence.
+ */
 public class Dick {
     private final Storage storage;
     private final TaskList tasks;
     private final Ui ui;
 
+    /**
+     * Creates a new chatbot instance that loads tasks from the given file path.
+     *
+     * @param filePath Path to the save file.
+     */
     public Dick(String filePath) {
         this.ui = new Ui();
         this.storage = new Storage(filePath);
@@ -20,6 +28,9 @@ public class Dick {
         this.tasks = new TaskList(loaded);
     }
 
+    /**
+     * Runs the main command loop until the user exits.
+     */
     public void run() {
         ui.showWelcome();
 
@@ -68,6 +79,7 @@ public class Dick {
         ui.showGoodbye();
     }
 
+    /** Handles the {@code todo} command. */
     private void handleTodo(String args) {
         if (args.isBlank()) {
             ui.showMessage("Invalid format. Use: todo <desc>");
@@ -78,6 +90,7 @@ public class Dick {
         ui.showAdded(tasks.get(tasks.size() - 1));
     }
 
+    /** Handles the {@code deadline} command. */
     private void handleDeadline(String args) {
         String[] parts = args.split(" /by ", 2);
         if (parts.length < 2 || parts[0].isBlank() || parts[1].isBlank()) {
@@ -96,6 +109,7 @@ public class Dick {
         ui.showAdded(tasks.get(tasks.size() - 1));
     }
 
+    /** Handles the {@code event} command. */
     private void handleEvent(String args) {
         String[] firstSplit = args.split(" /from ", 2);
         if (firstSplit.length < 2 || firstSplit[0].isBlank()) {
@@ -115,6 +129,12 @@ public class Dick {
         ui.showAdded(tasks.get(tasks.size() - 1));
     }
 
+    /**
+     * Handles the {@code mark} and {@code unmark} commands.
+     *
+     * @param args Task number string.
+     * @param isDone True to mark done, false to unmark.
+     */
     private void handleMark(String args, boolean isDone) {
         int index = parseTaskIndex(args, tasks.size());
         if (index == -1) {
@@ -139,6 +159,7 @@ public class Dick {
         }
     }
 
+    /** Handles the {@code delete} command. */
     private void handleDelete(String args) {
         int index = parseTaskIndex(args, tasks.size());
         if (index == -1) {
@@ -151,6 +172,7 @@ public class Dick {
         ui.showDeleted(removed, tasks.size());
     }
 
+    /** Handles the stretch {@code on <date>} command for filtering by date. */
     private void handleOnDate(String args) {
         if (args.isBlank()) {
             ui.showMessage("Invalid format. Use: on <yyyy-mm-dd>");
@@ -191,6 +213,7 @@ public class Dick {
         ui.showTasks(matches);
     }
 
+    /** Handles the {@code find} command. */
     private void handleFind(String args) {
         if (args.isBlank()) {
             ui.showMessage("Invalid format. Use: find <keyword>");
@@ -199,6 +222,13 @@ public class Dick {
         ui.showFindResults(tasks.find(args.trim()));
     }
 
+    /**
+     * Parses a 1-based task number into a 0-based index.
+     *
+     * @param numberText User input for task number.
+     * @param taskCount Current number of tasks.
+     * @return 0-based index, or {@code -1} if invalid.
+     */
     private int parseTaskIndex(String numberText, int taskCount) {
         if (numberText.isBlank()) {
             return -1;
@@ -211,6 +241,11 @@ public class Dick {
         }
     }
 
+    /**
+     * Application entry point.
+     *
+     * @param args Command line arguments (unused).
+     */
     public static void main(String[] args) {
         new Dick("data/tasks.txt").run();
     }
