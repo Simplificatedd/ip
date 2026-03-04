@@ -53,6 +53,9 @@ public class Dick {
                 case "delete":
                     handleDelete(pc.args);
                     break;
+                case "on":
+                    handleOnDate(pc.args);
+                    break;
                 default:
                     ui.showMessage("Command not recognized");
                     break;
@@ -75,7 +78,7 @@ public class Dick {
     private void handleDeadline(String args) {
         String[] parts = args.split(" /by ", 2);
         if (parts.length < 2 || parts[0].isBlank() || parts[1].isBlank()) {
-            ui.showMessage("Invalid format. Use: deadline <desc> /by <yyyy-mm-dd>");
+            ui.showMessage("Invalid format. Use: deadline <desc> /by <yyyy-mm-dd> or deadline <desc> /by <yyyy-mm-dd HHmm>");
             return;
         }
 
@@ -143,6 +146,46 @@ public class Dick {
         Task removed = tasks.remove(index);
         storage.save(tasks.asUnmodifiableList());
         ui.showDeleted(removed, tasks.size());
+    }
+
+    private void handleOnDate(String args) {
+        if (args.isBlank()) {
+            ui.showMessage("Invalid format. Use: on <yyyy-mm-dd>");
+            return;
+        }
+
+        java.time.LocalDate target;
+        try {
+            target = java.time.LocalDate.parse(args.trim());
+        } catch (java.time.format.DateTimeParseException e) {
+            ui.showMessage("Invalid date. Use: yyyy-mm-dd");
+            return;
+        }
+
+        java.util.List<dick.task.Task> matches = new java.util.ArrayList<>();
+        for (dick.task.Task t : tasks.asUnmodifiableList()) {
+            if (t instanceof dick.task.Deadline d) {
+                if (d.getByDate().equals(target)) {
+                    matches.add(t);
+                }
+            } else if (t instanceof dick.task.Event ev) {
+                // “occurring on date” → if date is within [fromDate, toDate]
+                java.time.LocalDate start = ev.getFromDate();
+                java.time.LocalDate end = ev.getToDate();
+                if ((target.equals(start) || target.isAfter(start)) &&
+                        (target.equals(end) || target.isBefore(end))) {
+                    matches.add(t);
+                }
+            }
+        }
+
+        if (matches.isEmpty()) {
+            ui.showMessage("No deadlines/events on " + target);
+            return;
+        }
+
+        ui.showMessage("Here are the matching tasks in your list:");
+        ui.showTasks(matches);
     }
 
     private int parseTaskIndex(String numberText, int taskCount) {
