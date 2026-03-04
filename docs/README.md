@@ -6,11 +6,11 @@ Dick is a **desktop chatbot for managing your tasks**, optimized for use via a C
 
 ## Quick Start
 
-1. Ensure you have **Java 17** installed.
-2. Download the latest `dick.jar` from the [releases page](../../releases).
+1. Ensure you have **Java 17** or later installed.
+2. Download the latest `Dick.jar` from the [releases page](../../releases).
 3. Open a terminal in the folder containing the jar and run:
 ```
-   java -jar dick.jar
+   java -jar Dick.jar
 ```
 4. Type a command and press **Enter** to execute it.
 
