@@ -2,3 +2,5 @@ DEADLINE|0|return book|2019-12-02
 DEADLINE|0|return book|2019-12-02
 EVENT|0|project meeting|2019-12-02T09:00|2019-12-02T11:00
 DEADLINE|0|return book|2019-12-02T18:00
+TODO|0|read book
+DEADLINE|0|return book|2019-12-02T18:00

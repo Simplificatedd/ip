@@ -35,4 +35,17 @@ public class TaskList {
     public List<Task> asUnmodifiableList() {
         return List.copyOf(tasks);
     }
+
+    public List<Task> find(String keyword) {
+        List<Task> matches = new ArrayList<>();
+        String needle = keyword.toLowerCase();
+
+        for (Task t : tasks) {
+            if (t.getDescription().toLowerCase().contains(needle)) {
+                matches.add(t);
+            }
+        }
+
+        return matches;
+    }
 }

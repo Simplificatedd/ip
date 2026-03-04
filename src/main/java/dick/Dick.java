@@ -56,6 +56,9 @@ public class Dick {
                 case "on":
                     handleOnDate(pc.args);
                     break;
+                case "find":
+                    handleFind(pc.args);
+                    break;
                 default:
                     ui.showMessage("Command not recognized");
                     break;
@@ -186,6 +189,14 @@ public class Dick {
 
         ui.showMessage("Here are the matching tasks in your list:");
         ui.showTasks(matches);
+    }
+
+    private void handleFind(String args) {
+        if (args.isBlank()) {
+            ui.showMessage("Invalid format. Use: find <keyword>");
+            return;
+        }
+        ui.showFindResults(tasks.find(args.trim()));
     }
 
     private int parseTaskIndex(String numberText, int taskCount) {
