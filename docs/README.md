@@ -71,8 +71,8 @@ Shows all tasks currently in your list.
 ```
 Here are the tasks in your list:
 1. [T][ ] Read a book
-2. [D][ ] Submit assignment (by: Apr 10 2025)
-3. [E][ ] Team meeting (from: Apr 10 2025 to: Apr 11 2025)
+2. [D][ ] Submit assignment (by: 10 Apr 2025)
+3. [E][ ] Team meeting (from: 10 Apr 2025 to: 11 Apr 2025)
 ```
 
 > **Task type icons:** `[T]` = Todo, `[D]` = Deadline, `[E]` = Event  
