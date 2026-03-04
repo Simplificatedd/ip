@@ -1,21 +1,34 @@
 package dick.task;
 
+import dick.DateTimeUtil;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 public class Event extends Task {
-    protected String from;
-    protected String to;
+    protected LocalDateTime from;
+    protected LocalDateTime to;
 
     public Event(String description, String from, String to) {
         super(description);
-        this.from = from;
-        this.to = to;
+        this.from = DateTimeUtil.parseDateTime(from);
+        this.to = DateTimeUtil.parseDateTime(to);
     }
 
     public String getFrom() {
-        return from;
+        return DateTimeUtil.toStorageString(from);
     }
 
     public String getTo() {
-        return to;
+        return DateTimeUtil.toStorageString(to);
+    }
+
+    public LocalDate getFromDate() {
+        return from.toLocalDate();
+    }
+
+    public LocalDate getToDate() {
+        return to.toLocalDate();
     }
 
     @Override
@@ -25,6 +38,8 @@ public class Event extends Task {
 
     @Override
     public String toString() {
-        return super.toString() + " (from: " + from + " to: " + to + ")";
+        return super.toString()
+                + " (from: " + DateTimeUtil.toDisplayString(from)
+                + " to: " + DateTimeUtil.toDisplayString(to) + ")";
     }
 }

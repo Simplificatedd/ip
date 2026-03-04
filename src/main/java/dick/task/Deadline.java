@@ -1,15 +1,24 @@
 package dick.task;
 
+import dick.DateTimeUtil;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 public class Deadline extends Task {
-    protected String by;
+    protected LocalDateTime by;
 
     public Deadline(String description, String by) {
         super(description);
-        this.by = by;
+        this.by = DateTimeUtil.parseDateTime(by);
     }
 
     public String getBy() {
-        return by;
+        return DateTimeUtil.toStorageString(by);
+    }
+
+    public LocalDate getByDate() {
+        return by.toLocalDate();
     }
 
     @Override
@@ -19,6 +28,6 @@ public class Deadline extends Task {
 
     @Override
     public String toString() {
-        return super.toString() + " (by: " + by + ")";
+        return super.toString() + " (by: " + DateTimeUtil.toDisplayString(by) + ")";
     }
 }

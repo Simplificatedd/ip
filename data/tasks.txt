@@ -1,2 +1,4 @@
-EVENT|0|Raven Tang attend CS2113 Lecture|Friday 20 Feb 2026 4pm|6pm
-DEADLINE|0|Raven Tang submit UG draft|today 2359
+DEADLINE|0|return book|2019-12-02
+DEADLINE|0|return book|2019-12-02
+EVENT|0|project meeting|2019-12-02T09:00|2019-12-02T11:00
+DEADLINE|0|return book|2019-12-02T18:00
